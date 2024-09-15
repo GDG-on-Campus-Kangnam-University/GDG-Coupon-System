@@ -25,11 +25,11 @@ class Coupon(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     coupon_number = Column(String, unique=True, nullable=False, default=lambda: str(uuid.uuid4()))  # UUID for coupon_number
     is_used = Column(Boolean, default=False, nullable=False)
-    create_user_email = Column(String, ForeignKey('users.email'), nullable=False)
+    create_user_email = Column(String, nullable=False)
     create_user_name = Column(String, nullable=False)
     discount_price = Column(Integer, nullable=False, default=5000)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
-    # Relationship with User
-    create_user = relationship('User', back_populates='coupons')
+    create_user_id = Column(Integer, ForeignKey('users.id'), nullable=False)  # User.id와 연결
+    create_user = relationship('User', back_populates='coupons')  # 사용자와의 관계 정의

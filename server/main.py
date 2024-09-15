@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from domain.user import user_router
+from domain.coupon import coupon_router
 
 app = FastAPI()
 
@@ -19,4 +20,4 @@ app.add_middleware(
 )
 
 app.include_router(user_router.router)
-# app.include_router(coupon_router.router)
+app.include_router(coupon_router.router)
