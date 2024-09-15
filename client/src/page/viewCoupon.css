@@ -1,0 +1,55 @@
+.coupon-container {
+  margin: 20px;
+}
+
+.coupon-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;  /* 고정된 레이아웃으로 설정 */
+}
+
+.coupon-table th,
+.coupon-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  height: 40px;  /* 각 셀의 높이 */
+  word-wrap: break-word;  /* 긴 단어 줄 바꿈 */
+}
+
+/* 열 비율 설정: 3:1:1 */
+.coupon-table th:nth-child(1),
+.coupon-table td:nth-child(1) {
+  width: 60%;  /* 첫 번째 열: 60% (3:1:1 비율 중 3에 해당) */
+}
+
+.coupon-table th:nth-child(2),
+.coupon-table td:nth-child(2) {
+  width: 20%;  /* 두 번째 열: 20% */
+}
+
+.coupon-table th:nth-child(3),
+.coupon-table td:nth-child(3) {
+  width: 20%;  /* 세 번째 열: 20% */
+}
+
+.coupon-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.coupon-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.coupon-table tr:hover {
+  background-color: #ddd;
+}
+
+.filter-container {
+  margin-bottom: 15px;
+}
+
+.filter-container label {
+  margin-right: 10px;
+}

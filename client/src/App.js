@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import Home from "./page/home";
 import Login from "./page/login";
+import HomeRoute from "./route";
 
 const App = () => {
-  const [userId, setUserId] = useState(null);
+  const [user, setUser] = useState(null);
 
   return (
     <div>
-      {!userId ? <Login setUserId={setUserId} /> : <Home userId={userId} />}
+      {!user ? <Login setUser={setUser} /> : <HomeRoute user={user} />}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import os
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -24,6 +24,10 @@ import schedule
 import time
 import threading
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
+
+from models import Coupon, User, RoleEnum
+
 
 load_dotenv()
 
@@ -102,7 +106,7 @@ class GooglesheetUtils:
             smtp.quit()
 
     # Google Sheets 데이터를 읽고 업데이트하는 함수
-    def read_and_update_spreadsheet(self, db: Session) -> None:
+    def read_and_update_spreadsheet(self, db: Session):
         # Apply Sheet와 Finance Sheet 데이터 가져오기
         apply_range = 'Apply Sheet!C:J'
         finance_range = 'Finance Sheet!B:D'
@@ -206,6 +210,7 @@ class GooglesheetUtils:
             self.service.spreadsheets().values().batchUpdate(spreadsheetId=self.spreadsheet_id, body=body_finance).execute()
 
         print(f"Updated {len(updates_apply)} rows in Apply Sheet and {len(updates_finance)} rows in Finance Sheet.")
+        return updates_apply, updates_finance
 
 
 # Google Sheets 데이터 읽기 및 업데이트 함수
@@ -213,18 +218,39 @@ def fetch_and_update_google_sheets_data():
     db = next(get_db())  # DB 세션 생성
     sheet_utils = GooglesheetUtils()
     try:
-        sheet_utils.read_and_update_spreadsheet(db)
+        updates_apply, updates_finance = sheet_utils.read_and_update_spreadsheet(db)
     finally:
         db.close()  # 세션 종료
+        
+    return updates_apply, updates_finance
 
-# 스케줄러 함수 (10분마다 실행)
+# 30분 간격으로 실행할 시간을 설정하는 함수
+def schedule_next_run():
+    now = datetime.now()
+    # 현재 시간을 기준으로 0분 또는 30분에 맞추기
+    next_minute = 30 if now.minute < 30 else 0
+    next_hour = now.hour if now.minute < 30 else (now.hour + 1) % 24
+
+    # 다음 실행 시간을 계산
+    next_run_time = now.replace(minute=next_minute, second=0, microsecond=0)
+    if next_minute == 0 and now.minute >= 30:  # 만약 다음 시간이 0분으로 넘어갈 경우
+        next_run_time += timedelta(hours=1)
+
+    # 실행까지 남은 시간 계산
+    delay = (next_run_time - now).total_seconds()
+
+    # 첫 실행 후 매 30분마다 실행
+    time.sleep(delay)
+    fetch_and_update_google_sheets_data()
+    schedule.every(30).minutes.do(fetch_and_update_google_sheets_data)
+
+# 스케줄러를 실행하는 함수
 def run_scheduler():
-    schedule.every(10).minutes.do(fetch_and_update_google_sheets_data)
-    
+    schedule_next_run()  # 첫 실행을 예약
     while True:
         schedule.run_pending()
         time.sleep(1)
-
+        
 # 서버 실행 시 스케줄러 시작
 @app.on_event("startup")
 def startup_event():
@@ -233,6 +259,29 @@ def startup_event():
     scheduler_thread = threading.Thread(target=run_scheduler)
     scheduler_thread.daemon = True  # 메인 프로그램이 종료되면 스레드도 자동 종료
     scheduler_thread.start()
+    
+def check_user_permission(user_id: int, db: Session):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if user.role not in [RoleEnum.Admin, RoleEnum.Lead]:
+        raise HTTPException(status_code=403, detail="You do not have permission to perform this action")
+
+    return user
+
+# FastAPI 엔드포인트 추가 (사용자가 요청을 보내면 실행)
+@app.post("/update-sheets")
+def update_google_sheets_data(user_id: int, db: Session = Depends(get_db)):
+    # 유저 권한 체크
+    check_user_permission(user_id, db)
+
+    try:
+        updates_apply, updates_finance = fetch_and_update_google_sheets_data()
+        return {"message": f"Updated {len(updates_apply)} rows in Apply Sheet and {len(updates_finance)} rows in Finance Sheet."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
+
 
 origins = [
     "http://127.0.0.1:5173",

@@ -32,4 +32,4 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
 
 
     # 로그인 성공 시 사용자 정보 반환
-    return {"id": user.id, "result": True}
+    return {"user":{"id":user.id, "email":user.email, "name":user.name, "dept":user.dept}, "result": True}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
-const Login = ({ setUserId }) => {
+const Login = ({ setUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -29,11 +29,12 @@ const Login = ({ setUserId }) => {
         body: JSON.stringify({ email, password }),
       });
       if (!response.ok) {
+        alert("올바르지 않은 아이디나 비밀번호입니다.");
         throw new Error("로그인 실패");
       }
 
       const data = await response.json();
-      setUserId(data.id);
+      setUser(data.user);
 
       navigate("/");
     } catch (e) {
