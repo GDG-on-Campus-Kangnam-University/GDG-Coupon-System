@@ -20,17 +20,22 @@
 /* 열 비율 설정: 3:1:1 */
 .coupon-table th:nth-child(1),
 .coupon-table td:nth-child(1) {
-  width: 60%;  /* 첫 번째 열: 60% (3:1:1 비율 중 3에 해당) */
+  width: 15%;  /* 첫 번째 열: 60% (3:1:1 비율 중 3에 해당) */
 }
 
 .coupon-table th:nth-child(2),
 .coupon-table td:nth-child(2) {
-  width: 20%;  /* 두 번째 열: 20% */
+  width: 55%;  /* 두 번째 열: 20% */
 }
 
 .coupon-table th:nth-child(3),
 .coupon-table td:nth-child(3) {
-  width: 20%;  /* 세 번째 열: 20% */
+  width: 15%;  /* 세 번째 열: 20% */
+}
+
+.coupon-table th:nth-child(3),
+.coupon-table td:nth-child(3) {
+  width: 15%;  /* 세 번째 열: 20% */
 }
 
 .coupon-table th {

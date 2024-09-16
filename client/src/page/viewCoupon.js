@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import gdsc from "../assets/gdsc.png";
 import './viewCoupon.css'; // 위의 CSS를 적용하기 위해 import
-
 
 // API로부터 쿠폰 목록을 가져오는 함수
 const fetchCoupons = async (userId, isUsedFilter) => {
   try {
     const url = isUsedFilter !== null
-      ? `http://3.39.110.98:8000/api/coupon/list?user_id=${userId}&is_used=${isUsedFilter}`
-      : `http://3.39.110.98:8000/api/coupon/list?user_id=${userId}`;
+      ? `http://localhost:8000/api/coupon/list?user_id=${userId}&is_used=${isUsedFilter}`
+      : `http://localhost:8000/api/coupon/list?user_id=${userId}`;
     
     const response = await fetch(url, {
       method: "GET",
@@ -29,6 +30,7 @@ const fetchCoupons = async (userId, isUsedFilter) => {
 };
 
 const ViewCoupons = ({ user }) => {
+  const navigate = useNavigate();
   const [coupons, setCoupons] = useState([]);
   const [isUsedFilter, setIsUsedFilter] = useState(null);  // 필터: 사용되지 않은 쿠폰 / 사용된 쿠폰
 
@@ -48,8 +50,12 @@ const ViewCoupons = ({ user }) => {
     setIsUsedFilter(value === "all" ? null : value === "used");
   };
 
+
   return (
     <div className="coupon-container">
+      <div className="link" onClick={()=>navigate("/")}>
+        <img src={gdsc} alt="gdsc" className="gdsc" />
+      </div>
       <h2>{user.name}의 쿠폰 목록</h2>
 
       {/* 필터 선택 박스 */}
@@ -66,6 +72,7 @@ const ViewCoupons = ({ user }) => {
       <table className="coupon-table">
         <thead>
           <tr>
+            <th>발급한 사용자</th>
             <th>쿠폰 번호</th>
             <th>할인 금액</th>
             <th>사용 여부</th>
@@ -75,6 +82,9 @@ const ViewCoupons = ({ user }) => {
           {coupons.length > 0 ? (
             coupons.map((coupon, index) => (
               <tr key={index}>
+                <td>
+                    {coupon.create_user_name}
+                </td>
                 <td>
                     {coupon.coupon_number}
                 </td>

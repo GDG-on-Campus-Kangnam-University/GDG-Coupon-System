@@ -94,6 +94,7 @@ def list_coupons(user_id: int, is_used: bool = None, db: Session = Depends(get_d
                     "coupon_number": mask_coupon_number(coupon.coupon_number),
                     "is_used": coupon.is_used,
                     "create_user_email": coupon.create_user_email,
+                    "create_user_name": coupon.create_user_name,
                     "discount_price": coupon.discount_price,
                     "created_at": coupon.created_at,
                     "updated_at": coupon.updated_at
@@ -110,6 +111,7 @@ def list_coupons(user_id: int, is_used: bool = None, db: Session = Depends(get_d
                 "coupon_number": coupon.coupon_number,
                 "is_used": coupon.is_used,
                 "create_user_email": coupon.create_user_email,
+                "create_user_name": coupon.create_user_name,
                 "discount_price": coupon.discount_price,
                 "created_at": coupon.created_at,
                 "updated_at": coupon.updated_at
