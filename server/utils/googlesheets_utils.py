@@ -3,7 +3,8 @@ from google.oauth2 import service_account
 from sqlalchemy.orm import Session
 from models import Coupon
 from utils.email_utils import send_email
-
+from utils.add_text_to_png import add_text_to_png
+from email_data.email_template import get_email_template
 class GooglesheetUtils:
     def __init__(self) -> None:
         self.spreadsheet_id = '1AmDSojXOQX5Fwz7B8P4qY8xzBUK63QF5fhn6zUI5Uq4'
@@ -36,6 +37,7 @@ class GooglesheetUtils:
        
         # 학번 매칭 및 쿠폰 유효성 확인
         for i, apply_row in enumerate(apply_data[1:], start=2):  # Apply Sheet 1행 헤더 제외
+            name = apply_row[0] if len(apply_row) > 0 else ''
             email = apply_row[1] if len(apply_row) > 1 else ''
             student_id_apply = apply_row[3] if len(apply_row) > 3 else ''  # 학번
             coupon_code = apply_row[6] if len(apply_row) > 6 else ''  # 쿠폰 번호, 존재하지 않으면 빈 문자열
@@ -92,9 +94,18 @@ class GooglesheetUtils:
                 print(f"Coupon {coupon.coupon_number} has been marked as used.")
             else:
                 continue
+            
+                # 사용 예시
+            image_path = "coupon_data/coupon_5000.png"  # 입력 이미지 경로
+            output_path = "coupon_data/output_image.png"  # 출력 이미지 경로
+            text = str(coupon.coupon_number)  # 삽입할 텍스트
+
+            add_text_to_png(image_path, output_path, text)
+
+            body = get_email_template(name, "")
 
             # 모든 조건이 충족되면 이메일 발송
-            send_email(email, "Invitation", "You have been successfully invited!")
+            send_email(email, "GDG Kangnam University 가입을 환영합니다!", body, output_path)
             
             updates_finance.append({
                     'range': f'Finance Sheet!D{finance_data.index(matching_finance) + 1}',

@@ -52,7 +52,6 @@ def create_coupon(request: CouponCreateRequest, db: Session = Depends(get_db)):
     image_path = "coupon_data/coupon_7000.png"  # 입력 이미지 경로
     output_path = "coupon_data/output_image.png"  # 출력 이미지 경로
     text = str(new_coupon.coupon_number)  # 삽입할 텍스트
-    # font_path = "path_to_font.ttf"  # 폰트 파일 경로 (없으면 기본 폰트 사용)
 
     add_text_to_png(image_path, output_path, text)
 

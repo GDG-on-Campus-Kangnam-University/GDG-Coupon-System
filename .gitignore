@@ -2,3 +2,4 @@ alembic.ini
 .env
 *__pycache__
 google_sheets.json
+output_image.png
