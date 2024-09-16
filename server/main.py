@@ -27,6 +27,8 @@ from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
 from models import Coupon, User, RoleEnum
+from starlette.responses import FileResponse
+from starlette.staticfiles import StaticFiles
 
 
 load_dotenv()
@@ -298,3 +300,9 @@ app.add_middleware(
 
 app.include_router(user_router.router)
 app.include_router(coupon_router.router)
+
+app.mount("/static", StaticFiles(directory="../client/build/static"))
+
+@app.get("/")
+def index():
+    return FileResponse("../client/build/index.html")

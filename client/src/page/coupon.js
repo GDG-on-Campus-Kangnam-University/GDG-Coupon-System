@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
+import gdsc from "../assets/gdsc.png";
+import keroro from "../assets/keroro6.png";
 
 const Coupon = ({ user }) => {
   const [email, setEmail] = useState("");
@@ -71,7 +73,7 @@ const Coupon = ({ user }) => {
 
   return (
     <div className="home-container">
-      <img src="/gdsc.png" alt="gdsc" className="gdsc" />
+      <img src={gdsc} alt="gdsc" className="gdsc" />
       <h2>쿠폰 생성기</h2>
       <form onSubmit={handleSubmit} className="home-form">
         <div className="input-group">
@@ -104,7 +106,7 @@ const Coupon = ({ user }) => {
         </div>
       </form>
       <div>
-        <img src="/keroro6.png" alt="keroro" className="image" />
+        <img src={keroro} alt="keroro" className="image" />
       </div>
     </div>
   );

@@ -2,6 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
+import gdsc from "../assets/gdsc.png";
+import keroro1 from "../assets/keroro1.png";
+import keroro2 from "../assets/keroro2.png";
+import keroro3 from "../assets/keroro3.png";
+import keroro4 from "../assets/keroro4.png";
+import keroro5 from "../assets/keroro5.png";
+
+
 const Login = ({ setUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -9,13 +17,8 @@ const Login = ({ setUser }) => {
 
   const navigate = useNavigate();
 
-  const images = [
-    "/keroro1.png",
-    "/keroro2.png",
-    "/keroro3.png",
-    "/keroro4.png",
-    "/keroro5.png",
-  ];
+  const images = [keroro1, keroro2, keroro3, keroro4, keroro5];
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,7 +55,7 @@ const Login = ({ setUser }) => {
 
   return (
     <div className="login-container">
-      <img src="/gdsc.png" alt="gdsc" className="gdsc" />
+      <img src={gdsc} alt="gdsc" className="gdsc" />
       <h2>로그인</h2>
       <form onSubmit={handleSubmit} className="login-form">
         <div className="input-group">

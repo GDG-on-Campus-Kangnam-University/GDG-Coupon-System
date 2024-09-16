@@ -1,6 +1,7 @@
 // src/components/Home.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import gdsc from "../assets/gdsc.png";
 
 const Home = ({user}) => {
   const navigate = useNavigate();
@@ -46,6 +47,7 @@ const Home = ({user}) => {
 
   return (
     <div style={styles.container}>
+      <img src={gdsc} alt="gdsc" className="gdsc" />
       <h1>홈 화면</h1>
       <p>{user.name}님 어서오세요!</p>
       <div style={styles.buttonContainer}>
@@ -71,6 +73,9 @@ const styles = {
   container: {
     textAlign: 'center',
     paddingTop: '50px',
+    display:'flex',
+    flexDirection:'column',
+    alignItems:'center',
   },
   buttonContainer: {
     display: 'flex',
