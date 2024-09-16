@@ -10,6 +10,8 @@ const Coupon = ({ user }) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [coupons, setCoupons] = useState([]);
+  const [isSending, setIsSending] = useState(false); // 상태 관리: 요청 중인지 확인
+
 
   useEffect(() => {
     const fetchCoupons = async () => {
@@ -44,15 +46,22 @@ const Coupon = ({ user }) => {
   
 
   const handleSubmit = async (e) => {
+    if (isSending) {
+      alert("메일 발송 중입니다. 잠시만 기다려주세요.");
+      return; // 연속 클릭 방지
+    }
+    console.log(user.role)
+    
     e.preventDefault();
-    if(email !== user.email || name !== user.name){
+    if(user.role ==="CoreMember" && (email !== user.email || name !== user.name)){
       alert("올바른 본인의 이름과 이메일을 입력해주세요.");
       return;
     }
+    setIsSending(true); 
 
     try {
       const response = await fetch(
-        "http://3.39.110.98:8000/api/coupon/create",
+        "http://3.39.110.98/api/coupon/create",
         {
           method: "POST",
           headers: {
@@ -71,6 +80,8 @@ const Coupon = ({ user }) => {
       setCoupons((prevCoupons) => [...prevCoupons, responseData.coupon_number]);
     } catch (e) {
       alert("더 이상 쿠폰을 생성할 수 없습니다.");
+    } finally{
+      setIsSending(false)
     }
   };
 
@@ -101,7 +112,10 @@ const Coupon = ({ user }) => {
             required
           />
         </div>
-        <button type="submit">쿠폰 생성</button>
+        <button
+          style={{ backgroundColor: isSending ? 'gray' : '#007bff' }}
+          disabled={isSending}
+          type="submit">{isSending ? "쿠폰 발급 중" :"쿠폰 생성"}</button>
         <div className="coupon-list">
           {coupons?.map((coupon, index) => (
             <p key={index} className="coupon-item">

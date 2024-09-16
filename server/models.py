@@ -20,9 +20,7 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     name = Column(String, nullable=False)
-    dept = Column(String, nullable=False)
     role = Column(Enum(RoleEnum, create_type=True), nullable=False, default=RoleEnum.CoreMember)  # Role column using Enum
-
 
     # Relationship with Coupon (One-to-Many)
     coupons = relationship('Coupon', back_populates='create_user')

@@ -4,6 +4,10 @@ from pydantic import BaseModel
 
 from database import get_db
 from models import Coupon, User, RoleEnum
+from utils.add_text_to_png import add_text_to_png
+
+from utils.email_utils import send_email
+from email_data.email_template import get_email_template
 
 router = APIRouter(
     prefix="/api/coupon",
@@ -28,7 +32,7 @@ def create_coupon(request: CouponCreateRequest, db: Session = Depends(get_db)):
     # 사용자가 이미 2개 이상의 쿠폰을 가지고 있는지 확인
     coupon_count = db.query(Coupon).filter(Coupon.create_user_email == request.email).count()
 
-    if coupon_count >= 2:
+    if coupon_count >= 2 and user.role == RoleEnum.CoreMember:
         raise HTTPException(status_code=400, detail="User already has 2 or more coupons")
 
     # 쿠폰 생성
@@ -43,6 +47,18 @@ def create_coupon(request: CouponCreateRequest, db: Session = Depends(get_db)):
     db.add(new_coupon)
     db.commit()
     db.refresh(new_coupon)
+    
+    # 사용 예시
+    image_path = "coupon_data/coupon_7000.png"  # 입력 이미지 경로
+    output_path = "coupon_data/output_image.png"  # 출력 이미지 경로
+    text = str(new_coupon.coupon_number)  # 삽입할 텍스트
+    # font_path = "path_to_font.ttf"  # 폰트 파일 경로 (없으면 기본 폰트 사용)
+
+    add_text_to_png(image_path, output_path, text)
+
+    subject = "GDG Kangnam University 가입을 환영합니다!"
+    body = get_email_template(user.name, "")
+    send_email(request.email, subject, body, output_path)
 
     return {"coupon_number": new_coupon.coupon_number, "result": True}
 
