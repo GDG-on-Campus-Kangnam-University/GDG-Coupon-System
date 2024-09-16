@@ -24,7 +24,7 @@ const Home = ({user}) => {
 
     setIsSending(true); // 요청 중임을 상태에 반영
     try {
-      const response = await fetch(`http://3.39.110.98:8000/update-sheets?user_id=${user.id}`, {
+      const response = await fetch(`http://3.39.110.98/update-sheets?user_id=${user.id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -26,6 +26,16 @@ body {
   max-width: 400px;
 }
 
+.link{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  :hover{
+    cursor: pointer;
+  }
+}
+
 h2 {
   margin-bottom: 1rem;
   text-align: center;

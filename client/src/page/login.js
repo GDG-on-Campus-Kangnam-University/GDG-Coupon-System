@@ -24,7 +24,7 @@ const Login = ({ setUser }) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://3.39.110.98:8000/api/user/login", {
+      const response = await fetch("http://3.39.110.98/api/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

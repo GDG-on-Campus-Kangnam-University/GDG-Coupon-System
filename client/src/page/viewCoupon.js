@@ -7,8 +7,8 @@ import './viewCoupon.css'; // 위의 CSS를 적용하기 위해 import
 const fetchCoupons = async (userId, isUsedFilter) => {
   try {
     const url = isUsedFilter !== null
-      ? `http://localhost:8000/api/coupon/list?user_id=${userId}&is_used=${isUsedFilter}`
-      : `http://localhost:8000/api/coupon/list?user_id=${userId}`;
+      ? `http://3.39.110.98/api/coupon/list?user_id=${userId}&is_used=${isUsedFilter}`
+      : `http://3.39.110.98/api/coupon/list?user_id=${userId}`;
     
     const response = await fetch(url, {
       method: "GET",

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../App.css";
 import gdsc from "../assets/gdsc.png";
 import keroro from "../assets/keroro6.png";
 
 const Coupon = ({ user }) => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [coupons, setCoupons] = useState([]);
@@ -12,7 +15,7 @@ const Coupon = ({ user }) => {
     const fetchCoupons = async () => {
       try {
         const response = await fetch(
-          `http://3.39.110.98:8000/api/coupon/user/${user.id}`,
+          `http://3.39.110.98/api/coupon/user/${user.id}`,
           {
             method: "GET",
             headers: {
@@ -73,7 +76,9 @@ const Coupon = ({ user }) => {
 
   return (
     <div className="home-container">
-      <img src={gdsc} alt="gdsc" className="gdsc" />
+      <div className="link" onClick={()=>{navigate('/')}}>
+        <img src={gdsc} alt="gdsc" className="gdsc" />
+      </div>
       <h2>쿠폰 생성기</h2>
       <form onSubmit={handleSubmit} className="home-form">
         <div className="input-group">
