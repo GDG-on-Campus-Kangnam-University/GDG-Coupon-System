@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def send_email(to_email: str, subject: str, body: str, image_path: str = None):
+def send_email(to_email: str, subject: str, body: str, image_path: str = None, image_path2: str = None, ):
     # 이메일 유효성 검사
     reg = r"^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$"
     if not re.match(reg, to_email):
@@ -43,6 +43,17 @@ def send_email(to_email: str, subject: str, body: str, image_path: str = None):
                     img = MIMEImage(img_file.read())
                     img.add_header('Content-ID', '<image1>')
                     img.add_header('Content-Disposition', 'inline', filename=os.path.basename(image_path))
+                    msg.attach(img)
+            except FileNotFoundError as e:
+                print(f"Image file not found: {e}")
+                return
+        
+        if image_path2:
+            try:
+                with open(image_path2, 'rb') as img_file:
+                    img = MIMEImage(img_file.read())
+                    img.add_header('Content-ID', '<image1>')
+                    img.add_header('Content-Disposition', 'inline', filename=os.path.basename(image_path2))
                     msg.attach(img)
             except FileNotFoundError as e:
                 print(f"Image file not found: {e}")

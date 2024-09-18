@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template</title>
+    <style>
+        body {
+            font-family: "Noto Sans Kr", sans-serif;
+            color: #202124;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .bold {
+          font-size: 20px;
+          font-weight: 700;
+        }
+        
+        .container {
+            margin: 0 auto;
+            margin-top: 20px;
+            text-align: left;
+            width: 624px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header img, .footer img {
+            width: 100%;
+            height: auto;
+        }
+        
+        .content {
+            padding: 24px;
+            line-height: 1.6;
+        }
+
+        .content p {
+            margin-bottom: 16px;
+        }
+        
+        .footer {
+            background-color: #eead3c;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .footer img {
+            width: 94px;
+            height: auto;
+        }     
+
+        .signature {
+          margin: 20px;
+          padding: 12px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          background-color: #ffffff;
+          width:230px;
+      }
+
+        .signature p {
+            color: rgb(30,50,61);
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            margin: 4px 0;
+        }
+
+        .signature .name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .signature .affiliation {
+            color: rgb(95,99,104);
+        }
+
+        .signature a {
+            color: #1155cc;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .signature .email span {
+            font-weight: bold;
+        }
+
+        .signature .email a {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .signature img {
+            margin-top: 16px;
+            width: 232px;
+            height: auto;
+        }
+
+        a {
+            color: #1155cc;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://i.ibb.co/FsvyVSL/GDG-Email-Signature.png" alt="Header" />
+        </div>
+
+        <div class="content">
+            <p class="bold">안녕하세요 {name}님,</p>
+            <p>Core Member으로서 GDG on Campus Kangnam University에 누구보다 먼저 관심을 가져주시고 운영진으로서 함께 열심히 오픈 준비를 해주셔서 감사합니다.</p>
+            <p>이번 GDG Kangnam University는 첫 번째 기수로서 2024년 9월 19일부터 활동을 시작하게 되었습니다.</p>
+            <p>첫 번째 기수로서 부족한 체계속에서 누구보다 더 많은 일을 해야했고 여러 난관이 많았지만, Core Member 모두가 열심히 밤낮 가리지 않고 활동을 해주셔서 처음 생각했던 것 보다 훨씬 대단한 커뮤니티가 만들어져가고 있는 것 같아요.</p>
+            <p>GDG의 첫번째 팬에게 보내는 선물이자, 같이 일하는 동료에게 Co-Lead로서 감사한 마음으로 7,000원 쿠폰과 함께 편지로나마 고마운 말을 전하고자 합니다.</p>
+            <p>분명히 저 스스로도 그렇고 GDG 활동에서도 여러 체계가 부족한 부분이 많다고 느끼실 수도 있지만, 언제든지 열린 마음으로 개선해 나갈 수 있도록 하겠습니다.</p>
+
+            <p>앞으로도 많은 활동 부탁드리며, 함께 즐겁게 커뮤니티를 만들어 나갈 수 있기를 기대합니다.</p>
+
+            <p>감사합니다.</p>
+            
+            <br />
+            <a href="https://discord.gg/UFaJc7cxYg" target="_blank">아직 디스코드에 참여하지 않은 분들이 있어요! [ 클릭 ]</a>
+            <br />
+            <a href="https://gdg-kangnam.notion.site/" target="_blank">GDG 홈페이지 바로가기</a>
+            <br />
+            <p>쿠폰번호: {coupon1}</p>
+            <p>쿠폰번호: {coupon2}</p>
+        </div>
+
+        <div class="footer">
+            <img src="https://i.ibb.co/5r1k6Ft/gdg-footer.png" alt="Footer" />
+        </div>
+    </div>
+
+    <div class="signature">
+        <p class="name">Hongki Shin</p>
+        <p class="affiliation">GDG on Campus Kangnam University</p>
+        <p class="position">Co Lead</p>
+        <p class="email">
+            <span>E&nbsp;</span>
+            <a href="mailto:{email}">hin6150@gmail.com</a>
+        </p>
+        <p class="affiliation">gdg-kangnam.notion.site</p>
+
+        <img src="https://i.ibb.co/d79TgZn/gdg.png" alt="Logo">
+    </div>
+</body>
+</html>

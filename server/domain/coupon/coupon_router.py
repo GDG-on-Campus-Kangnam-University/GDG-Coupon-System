@@ -7,7 +7,7 @@ from models import Coupon, User, RoleEnum
 from utils.add_text_to_png import add_text_to_png
 
 from utils.email_utils import send_email
-from email_data.email_template import get_email_template
+from email_data.email_template import get_notification_email_template, generate_gdg_cm_email
 
 router = APIRouter(
     prefix="/api/coupon",
@@ -30,17 +30,18 @@ def create_coupon(request: CouponCreateRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="User not found")
 
     # 사용자가 이미 2개 이상의 쿠폰을 가지고 있는지 확인
-    coupon_count = db.query(Coupon).filter(Coupon.create_user_email == request.email).count()
+    if user.role == RoleEnum.CoreMember:
+        coupon_count = db.query(Coupon).filter(Coupon.create_user_email == request.email).count()
 
-    if coupon_count >= 2 and user.role == RoleEnum.CoreMember:
-        raise HTTPException(status_code=400, detail="User already has 2 or more coupons")
+        if coupon_count >= 2:
+            raise HTTPException(status_code=400, detail="User already has 2 or more coupons")
 
     # 쿠폰 생성
     new_coupon = Coupon(
         create_user_email=request.email,
         create_user_name=request.name,
         create_user_id=user.id,
-        discount_price=7000
+        discount_price=5000
     )
 
     # 쿠폰을 데이터베이스에 저장
@@ -48,16 +49,18 @@ def create_coupon(request: CouponCreateRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_coupon)
     
-    # 사용 예시
-    image_path = "coupon_data/coupon_7000.png"  # 입력 이미지 경로
-    output_path = "coupon_data/output_image.png"  # 출력 이미지 경로
-    text = str(new_coupon.coupon_number)  # 삽입할 텍스트
+    # # 사용 예시
+    # image_path = "coupon_data/coupon_5000.png"  # 입력 이미지 경로
+    # output_path = "coupon_data/gdg_coupon_1.png"  # 출력 이미지 경로
+    # text = str(new_coupon.coupon_number)  # 삽입할 텍스트
 
-    add_text_to_png(image_path, output_path, text)
+    # add_text_to_png(image_path, output_path, text)
 
-    subject = "GDG Kangnam University 가입을 환영합니다!"
-    body = get_email_template(user.name, "")
-    send_email(request.email, subject, body, output_path)
+
+    # subject = "GDG Kangnam University Core Member 특전"
+    # body = get_notification_email_template(request.name, new_coupon.coupon_number, request.email)
+    
+    # send_email(request.email, subject, body, output_path)
 
     return {"coupon_number": new_coupon.coupon_number, "result": True}
 

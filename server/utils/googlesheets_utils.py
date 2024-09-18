@@ -4,10 +4,10 @@ from sqlalchemy.orm import Session
 from models import Coupon
 from utils.email_utils import send_email
 from utils.add_text_to_png import add_text_to_png
-from email_data.email_template import get_email_template
+from email_data.email_template import generate_gdg_cm_email
 class GooglesheetUtils:
     def __init__(self) -> None:
-        self.spreadsheet_id = '1AmDSojXOQX5Fwz7B8P4qY8xzBUK63QF5fhn6zUI5Uq4'
+        self.spreadsheet_id = '1NNP9Jk9HEI5d_PsLK0K9PSkYGc60CYU7vTrg12EHHwA'
         self.credentials = service_account.Credentials.from_service_account_file(
             'google_sheets.json', 
             scopes=['https://www.googleapis.com/auth/spreadsheets']
@@ -22,7 +22,7 @@ class GooglesheetUtils:
 
     def read_and_update_spreadsheet(self, db: Session):
         # Apply Sheet와 Finance Sheet 데이터 가져오기
-        apply_range = 'Apply Sheet!C:J'
+        apply_range = 'Apply Response!C:J'
         finance_range = 'Finance Sheet!B:D'
         
         apply_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range=apply_range).execute().get('values', [])
@@ -95,17 +95,45 @@ class GooglesheetUtils:
             else:
                 continue
             
+            # 쿠폰 생성
+            new_coupon1 = Coupon(
+                create_user_email=email,
+                create_user_name=name,
+                create_user_id=9,
+                discount_price=7000
+            )
+            
+            new_coupon2 = Coupon(
+                create_user_email=email,
+                create_user_name=name,
+                create_user_id=9,
+                discount_price=7000
+            )
+
+            db.add(new_coupon1)
+            db.add(new_coupon2)
+            db.commit()
+            db.refresh(new_coupon1)
+            db.refresh(new_coupon2)
+            
                 # 사용 예시
-            image_path = "coupon_data/coupon_5000.png"  # 입력 이미지 경로
-            output_path = "coupon_data/output_image.png"  # 출력 이미지 경로
-            text = str(coupon.coupon_number)  # 삽입할 텍스트
+            image_path = "coupon_data/coupon_7000.png"  # 입력 이미지 경로
+            output_path1 = "coupon_data/gdg_coupon_1.png"  # 출력 이미지 경로
+            text = str(new_coupon1.coupon_number)  # 삽입할 텍스트
 
-            add_text_to_png(image_path, output_path, text)
+            add_text_to_png(image_path, output_path1, text)
+            
+            output_path2 = "coupon_data/gdg_coupon_2.png"  # 출력 이미지 경로
+            text = str(new_coupon2.coupon_number)  # 삽입할 텍스트
 
-            body = get_email_template(name, "")
+            add_text_to_png(image_path, output_path2, text)
+
+            subject = "GDG Kangnam University Core Member 특전"
+            # subject = "GDG Kangnam University 가입을 환영합니다!"
+            body = generate_gdg_cm_email(name, new_coupon1.coupon_number, new_coupon2.coupon_number)
 
             # 모든 조건이 충족되면 이메일 발송
-            send_email(email, "GDG Kangnam University 가입을 환영합니다!", body, output_path)
+            send_email(email, subject, body, output_path1)
             
             updates_finance.append({
                     'range': f'Finance Sheet!D{finance_data.index(matching_finance) + 1}',
