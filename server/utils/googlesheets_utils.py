@@ -21,7 +21,7 @@ class GooglesheetUtils:
         return True, coupon.discount_price
 
     def read_and_update_spreadsheet(self, db: Session):
-        # Apply Sheet와 Finance Sheet 데이터 가져오기
+        # Apply Response와 Finance Sheet 데이터 가져오기
         apply_range = 'Apply Response!C:J'
         finance_range = 'Finance Sheet!B:D'
         
@@ -36,7 +36,7 @@ class GooglesheetUtils:
         updates_finance = []
        
         # 학번 매칭 및 쿠폰 유효성 확인
-        for i, apply_row in enumerate(apply_data[1:], start=2):  # Apply Sheet 1행 헤더 제외
+        for i, apply_row in enumerate(apply_data[1:], start=2):  # Apply Response 1행 헤더 제외
             name = apply_row[0] if len(apply_row) > 0 else ''
             email = apply_row[1] if len(apply_row) > 1 else ''
             student_id_apply = apply_row[3] if len(apply_row) > 3 else ''  # 학번
@@ -60,7 +60,7 @@ class GooglesheetUtils:
                     'values': [['Coupon Error']]
                 })
                 updates_apply.append({
-                    'range': f'Apply Sheet!J{i}',  # 처리 상태 업데이트
+                    'range': f'Apply Response!J{i}',  # 처리 상태 업데이트
                     'values': [['Coupon Error']]
                 })
                 continue
@@ -75,13 +75,14 @@ class GooglesheetUtils:
                 actual_amount = 0  # 기본값 0 또는 다른 값을 설정
                 
             if expected_amount != actual_amount:
+                print(actual_amount)
                 # 금액 불일치
                 updates_finance.append({
                     'range': f'Finance Sheet!D{finance_data.index(matching_finance) + 1}',
                     'values': [['Price Different', actual_amount-expected_amount]]
                 })
                 updates_apply.append({
-                    'range': f'Apply Sheet!J{i}',
+                    'range': f'Apply Response!J{i}',
                     'values': [['Price Different']]
                 })
                 continue
@@ -141,7 +142,7 @@ class GooglesheetUtils:
                 })
             # 처리 완료로 업데이트
             updates_apply.append({
-                'range': f'Apply Sheet!J{i}',
+                'range': f'Apply Response!J{i}',
                 'values': [['Invited Sent']]
             })
 
@@ -160,5 +161,5 @@ class GooglesheetUtils:
             }
             self.service.spreadsheets().values().batchUpdate(spreadsheetId=self.spreadsheet_id, body=body_finance).execute()
 
-        print(f"Updated {len(updates_apply)} rows in Apply Sheet and {len(updates_finance)} rows in Finance Sheet.")
+        print(f"Updated {len(updates_apply)} rows in Apply Response and {len(updates_finance)} rows in Finance Sheet.")
         return updates_apply, updates_finance
