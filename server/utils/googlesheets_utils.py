@@ -138,7 +138,15 @@ class GooglesheetUtils:
             body = generate_gdg_cm_email(name, new_coupon1.coupon_number, new_coupon2.coupon_number)
 
             # 모든 조건이 충족되면 이메일 발송
-            send_email(email, subject, body, output_path1, output_path2)
+            email_sent = send_email(email, subject, body, output_path1, output_path2)
+    
+            if not email_sent:
+                # 이메일 발송 실패 시 상태 업데이트 (필요시 쿠폰 복구 등 추가 처리 가능)
+                updates_apply.append({
+                    'range': f'Apply Response!J{i}',
+                    'values': [['Email Failed']]
+                })
+                continue  # 이메일 발송에 실패해도 다음 루프로 넘어감
             
             updates_finance.append({
                     'range': f'Finance Sheet!E{finance_data.index(matching_finance) + 1}',
