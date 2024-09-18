@@ -10,7 +10,6 @@ def generate_gdg_cm_email(name, coupon1, coupon2):
             body {{
                 font-family: "Noto Sans Kr", sans-serif;
                 color: #202124;
-                background-color: #fafafa;
                 margin: 0;
                 padding: 0;
             }}
@@ -26,8 +25,7 @@ def generate_gdg_cm_email(name, coupon1, coupon2):
                 text-align: left;
                 width: 624px;
                 padding: 20px;
-                background-color: #ffffff;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                background-color: #fafafa;
             }}
             
             .header img, .footer img {{
@@ -58,15 +56,11 @@ def generate_gdg_cm_email(name, coupon1, coupon2):
             .signature {{
                 margin: 20px;
                 padding: 12px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                background-color: #ffffff;
-                width:230px;
+                width: 230px;
             }}
 
             .signature p {{
-                color: rgb(30,50,61);
                 font-size: 14px;
-                font-family: Arial, sans-serif;
                 margin: 4px 0;
             }}
 
@@ -174,7 +168,6 @@ def get_notification_email_template(name, coupon):
             body {{
                 font-family: Arial, sans-serif;
                 color: #202124;
-                background-color: #fafafa;
                 margin: 0;
                 padding: 0;
             }}
@@ -189,7 +182,7 @@ def get_notification_email_template(name, coupon):
                 text-align: left;
                 width: 624px;
                 padding: 20px;
-                background-color: #ffffff;
+                background-color: #fafafa;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             }}
             
@@ -332,7 +325,6 @@ def generate_gdg_welcome_email(name, coupon):
             body {{
                 font-family: "Noto Sans Kr", sans-serif;
                 color: #202124;
-                background-color: #fafafa;
                 margin: 0;
                 padding: 0;
             }}
@@ -348,8 +340,7 @@ def generate_gdg_welcome_email(name, coupon):
                 text-align: left;
                 width: 624px;
                 padding: 20px;
-                background-color: #ffffff;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                background-color: #fafafa;
             }}
             
             .header img, .footer img {{
@@ -380,9 +371,7 @@ def generate_gdg_welcome_email(name, coupon):
             .signature {{
                 margin: 20px;
                 padding: 12px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                background-color: #ffffff;
-                width:230px;
+                width: 230px;
             }}
 
             .signature p {{

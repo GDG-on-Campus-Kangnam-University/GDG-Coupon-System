@@ -2,5 +2,4 @@ alembic.ini
 .env
 *__pycache__
 google_sheets.json
-gdg_coupon_1.png
-gdg_coupon_2.png
+gdg_coupon

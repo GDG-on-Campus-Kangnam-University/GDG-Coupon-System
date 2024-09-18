@@ -1,6 +1,7 @@
 import os
 import smtplib
 import re
+import time  # 대기 시간을 추가하기 위해 필요한 모듈
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
@@ -8,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def send_email(to_email: str, subject: str, body: str, image_path: str = None, image_path2: str = None, ):
+def send_email(to_email: str, subject: str, body: str, image_path: str = None, image_path2: str = None, wait_time: int = 15):
     # 이메일 유효성 검사
     reg = r"^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$"
     if not re.match(reg, to_email):
@@ -52,7 +53,7 @@ def send_email(to_email: str, subject: str, body: str, image_path: str = None, i
             try:
                 with open(image_path2, 'rb') as img_file:
                     img = MIMEImage(img_file.read())
-                    img.add_header('Content-ID', '<image1>')
+                    img.add_header('Content-ID', '<image2>')
                     img.add_header('Content-Disposition', 'inline', filename=os.path.basename(image_path2))
                     msg.attach(img)
             except FileNotFoundError as e:
@@ -62,6 +63,10 @@ def send_email(to_email: str, subject: str, body: str, image_path: str = None, i
         # 이메일 전송
         smtp.sendmail(smtp_user, to_email, msg.as_string())
         print("정상적으로 메일이 발송되었습니다.")
+        
+        # 대기 시간 추가
+        print(f"{wait_time}초 대기 후 다음 메일을 전송합니다.")
+        time.sleep(wait_time)  # wait_time 만큼 대기
     
     except smtplib.SMTPException as e:
         print(f"Failed to send email: {e}")

@@ -5,6 +5,10 @@ from models import Coupon
 from utils.email_utils import send_email
 from utils.add_text_to_png import add_text_to_png
 from email_data.email_template import generate_gdg_cm_email
+
+def generate_output_path(coupon_number):
+    return f"coupon_data/gdg_coupon/{coupon_number}.png"
+
 class GooglesheetUtils:
     def __init__(self) -> None:
         self.spreadsheet_id = '1NNP9Jk9HEI5d_PsLK0K9PSkYGc60CYU7vTrg12EHHwA'
@@ -16,8 +20,12 @@ class GooglesheetUtils:
 
     def is_coupon_valid(self, coupon_code: str, db: Session):
         coupon = db.query(Coupon).filter(Coupon.coupon_number == coupon_code).first()
-        if not coupon or coupon.is_used:
+        if not coupon:
+            return True, 0
+        
+        if coupon.is_used:
             return False, None
+        
         return True, coupon.discount_price
 
     def read_and_update_spreadsheet(self, db: Session):
@@ -91,8 +99,6 @@ class GooglesheetUtils:
                 db.commit()  # 변경 사항을 DB에 커밋
                 db.refresh(coupon)  # 업데이트된 내용을 세션에서 다시 읽어옵니다.
                 print(f"Coupon {coupon.coupon_number} has been marked as used.")
-            else:
-                continue
             
             # 쿠폰 생성
             new_coupon1 = Coupon(
@@ -117,12 +123,12 @@ class GooglesheetUtils:
             
                 # 사용 예시
             image_path = "coupon_data/coupon_7000.png"  # 입력 이미지 경로
-            output_path1 = "coupon_data/gdg_coupon_1.png"  # 출력 이미지 경로
+            output_path1 = generate_output_path(new_coupon1.coupon_number)  # 출력 이미지 경로
             text = str(new_coupon1.coupon_number)  # 삽입할 텍스트
 
             add_text_to_png(image_path, output_path1, text)
             
-            output_path2 = "coupon_data/gdg_coupon_2.png"  # 출력 이미지 경로
+            output_path2 = generate_output_path(new_coupon2.coupon_number)  # 출력 이미지 경로
             text = str(new_coupon2.coupon_number)  # 삽입할 텍스트
 
             add_text_to_png(image_path, output_path2, text)
