@@ -68,7 +68,7 @@ class GooglesheetUtils:
             expected_amount = 15000 - discount_price
             try:
                 # 값이 있고, 숫자일 경우 정수 변환, 그렇지 않으면 0으로 설정
-                actual_amount = int(matching_finance[1]) if matching_finance[1].strip() else 0
+                actual_amount = int(matching_finance[2]) if matching_finance[2].strip() else 0
             except (ValueError, IndexError, AttributeError) as e:
                 print(f"Error converting actual_amount: {e}")
                 actual_amount = 0  # 기본값 0 또는 다른 값을 설정
