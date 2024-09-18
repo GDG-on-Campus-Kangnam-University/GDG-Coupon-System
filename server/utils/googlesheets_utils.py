@@ -23,7 +23,7 @@ class GooglesheetUtils:
     def read_and_update_spreadsheet(self, db: Session):
         # Apply Response와 Finance Sheet 데이터 가져오기
         apply_range = 'Apply Response!C:J'
-        finance_range = 'Finance Sheet!B:D'
+        finance_range = 'Finance Sheet!B:G'
         
         apply_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range=apply_range).execute().get('values', [])
         finance_data = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range=finance_range).execute().get('values', [])
@@ -36,7 +36,7 @@ class GooglesheetUtils:
         updates_finance = []
        
         # 학번 매칭 및 쿠폰 유효성 확인
-        for i, apply_row in enumerate(apply_data[1:], start=2):  # Apply Response 1행 헤더 제외
+        for i, apply_row in enumerate(apply_data[1:], start=2):  # Apply Response 1행 헤더 제외      
             name = apply_row[0] if len(apply_row) > 0 else ''
             email = apply_row[1] if len(apply_row) > 1 else ''
             student_id_apply = apply_row[3] if len(apply_row) > 3 else ''  # 학번
@@ -45,9 +45,8 @@ class GooglesheetUtils:
 
             if processed != None:
                 continue
-
             # 학번으로 Finance Sheet에서 찾기
-            matching_finance = next((row for row in finance_data if row[0] == student_id_apply), None)
+            matching_finance = next((row for row in finance_data if (row[0] == student_id_apply and row[5] == 'FALSE')), None)
             if not matching_finance:
                 continue
             
@@ -56,7 +55,7 @@ class GooglesheetUtils:
             if not is_valid:
                 # 쿠폰이 유효하지 않음
                 updates_finance.append({
-                    'range': f'Finance Sheet!D{finance_data.index(matching_finance) + 1}',  # 초대 상태 업데이트
+                    'range': f'Finance Sheet!E{finance_data.index(matching_finance) + 1}',  # 초대 상태 업데이트
                     'values': [['Coupon Error']]
                 })
                 updates_apply.append({
@@ -75,10 +74,9 @@ class GooglesheetUtils:
                 actual_amount = 0  # 기본값 0 또는 다른 값을 설정
                 
             if expected_amount != actual_amount:
-                print(actual_amount)
                 # 금액 불일치
                 updates_finance.append({
-                    'range': f'Finance Sheet!D{finance_data.index(matching_finance) + 1}',
+                    'range': f'Finance Sheet!E{finance_data.index(matching_finance) + 1}',
                     'values': [['Price Different', actual_amount-expected_amount]]
                 })
                 updates_apply.append({
@@ -134,10 +132,10 @@ class GooglesheetUtils:
             body = generate_gdg_cm_email(name, new_coupon1.coupon_number, new_coupon2.coupon_number)
 
             # 모든 조건이 충족되면 이메일 발송
-            send_email(email, subject, body, output_path1)
+            send_email(email, subject, body, output_path1, output_path2)
             
             updates_finance.append({
-                    'range': f'Finance Sheet!D{finance_data.index(matching_finance) + 1}',
+                    'range': f'Finance Sheet!E{finance_data.index(matching_finance) + 1}',
                     'values': [['Invited Sent']]
                 })
             # 처리 완료로 업데이트
