@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from models import Coupon
 from utils.email_utils import send_email
 from utils.add_text_to_png import add_text_to_png
-from email_data.email_template import generate_gdg_cm_email
+from email_data.email_template import generate_gdg_welcome_email
 
 def generate_output_path(coupon_number):
     return f"coupon_data/gdg_coupon/{coupon_number}.png"
@@ -53,6 +53,7 @@ class GooglesheetUtils:
 
             if processed != None:
                 continue
+            
             # 학번으로 Finance Sheet에서 찾기
             matching_finance = next((row for row in finance_data if (row[0] == student_id_apply and row[5] == 'FALSE')), None)
             if not matching_finance:
@@ -101,44 +102,28 @@ class GooglesheetUtils:
                 print(f"Coupon {coupon.coupon_number} has been marked as used.")
             
             # 쿠폰 생성
-            new_coupon1 = Coupon(
+            new_coupon = Coupon(
                 create_user_email=email,
                 create_user_name=name,
                 create_user_id=9,
-                discount_price=7000
-            )
-            
-            new_coupon2 = Coupon(
-                create_user_email=email,
-                create_user_name=name,
-                create_user_id=9,
-                discount_price=7000
+                discount_price=5000
             )
 
-            db.add(new_coupon1)
-            db.add(new_coupon2)
+            db.add(new_coupon)
             db.commit()
-            db.refresh(new_coupon1)
-            db.refresh(new_coupon2)
+            db.refresh(new_coupon)
             
-                # 사용 예시
-            image_path = "coupon_data/coupon_7000.png"  # 입력 이미지 경로
-            output_path1 = generate_output_path(new_coupon1.coupon_number)  # 출력 이미지 경로
-            text = str(new_coupon1.coupon_number)  # 삽입할 텍스트
+            image_path = "coupon_data/coupon_5000.png"  # 입력 이미지 경로
+            output_path = generate_output_path(new_coupon.coupon_number)  # 출력 이미지 경로
+            text = str(new_coupon.coupon_number)  # 삽입할 텍스트
 
-            add_text_to_png(image_path, output_path1, text)
-            
-            output_path2 = generate_output_path(new_coupon2.coupon_number)  # 출력 이미지 경로
-            text = str(new_coupon2.coupon_number)  # 삽입할 텍스트
+            add_text_to_png(image_path, output_path, text)
 
-            add_text_to_png(image_path, output_path2, text)
-
-            subject = "GDG Kangnam University Core Member 특전"
-            # subject = "GDG Kangnam University 가입을 환영합니다!"
-            body = generate_gdg_cm_email(name, new_coupon1.coupon_number, new_coupon2.coupon_number)
+            subject = "GDG on Campus Kangnam University 가입을 환영합니다!"
+            body = generate_gdg_welcome_email(name, new_coupon.coupon_number)
 
             # 모든 조건이 충족되면 이메일 발송
-            email_sent = send_email(email, subject, body, output_path1, output_path2)
+            email_sent = send_email(email, subject, body, output_path)
     
             if not email_sent:
                 # 이메일 발송 실패 시 상태 업데이트 (필요시 쿠폰 복구 등 추가 처리 가능)

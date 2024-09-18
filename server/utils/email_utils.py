@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def send_email(to_email: str, subject: str, body: str, image_path: str = None, image_path2: str = None, wait_time: int = 15):
+def send_email(to_email: str, subject: str, body: str, image_path: str = None, wait_time: int = 10):
     reg = r"^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$"
     if not re.match(reg, to_email):
         print("받으실 메일 주소를 정확히 입력하십시오.")
@@ -36,13 +36,6 @@ def send_email(to_email: str, subject: str, body: str, image_path: str = None, i
                 img = MIMEImage(img_file.read())
                 img.add_header('Content-ID', '<image1>')
                 img.add_header('Content-Disposition', 'inline', filename=os.path.basename(image_path))
-                msg.attach(img)
-
-        if image_path2:
-            with open(image_path2, 'rb') as img_file:
-                img = MIMEImage(img_file.read())
-                img.add_header('Content-ID', '<image2>')
-                img.add_header('Content-Disposition', 'inline', filename=os.path.basename(image_path2))
                 msg.attach(img)
 
         smtp.sendmail(smtp_user, to_email, msg.as_string())
