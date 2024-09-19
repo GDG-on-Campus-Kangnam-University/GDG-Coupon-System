@@ -10,10 +10,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def send_email(to_email: str, subject: str, body: str, image_path: str = None, wait_time: int = 10):
-    reg = r"^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$"
+    reg = r"^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?$"
     if not re.match(reg, to_email):
         print("받으실 메일 주소를 정확히 입력하십시오.")
         return False  # 실패 시 False 반환
+
     
     smtp_server = "smtp.gmail.com"
     smtp_port = 465

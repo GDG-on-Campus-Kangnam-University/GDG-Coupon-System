@@ -7,7 +7,8 @@ from models import Coupon, User, RoleEnum
 from utils.add_text_to_png import add_text_to_png
 
 from utils.email_utils import send_email
-from email_data.email_template import get_notification_email_template, generate_gdg_cm_email
+from email_data.email_template import get_notification_email_template
+from utils.googlesheets_utils import GooglesheetUtils, generate_output_path
 
 router = APIRouter(
     prefix="/api/coupon",
@@ -49,13 +50,12 @@ def create_coupon(request: CouponCreateRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_coupon)
     
-    # # 사용 예시
-    # image_path = "coupon_data/coupon_5000.png"  # 입력 이미지 경로
-    # output_path = "coupon_data/gdg_coupon_1.png"  # 출력 이미지 경로
-    # text = str(new_coupon.coupon_number)  # 삽입할 텍스트
+    # 사용 예시
+    image_path = "coupon_data/coupon_5000.png"  # 입력 이미지 경로
+    output_path = generate_output_path(new_coupon.coupon_number)  # 출력 이미지 경로
+    text = str(new_coupon.coupon_number)  # 삽입할 텍스트
 
-    # add_text_to_png(image_path, output_path, text)
-
+    add_text_to_png(image_path, output_path, text)
 
     # subject = "GDG Kangnam University Core Member 특전"
     # body = get_notification_email_template(request.name, new_coupon.coupon_number, request.email)
@@ -137,3 +137,52 @@ def list_coupons(user_id: int, is_used: bool = None, db: Session = Depends(get_d
             for coupon in coupons
         ]
     }
+
+# @router.post("/send-email")
+# def send_email_api(db: Session = Depends(get_db)):
+    googlesheet_utils = GooglesheetUtils()
+    
+    # 구글 시트에서 이메일 목록 및 상태 정보 가져오기
+    emails_data = googlesheet_utils.get_emails_from_sheet()
+
+    # 이메일 보내기 작업 수행
+    for index, row in enumerate(emails_data[1:], start=1):  # start=1로 1행부터 처리
+        email = row[0] if len(row) > 0 else None
+        
+        if not email:
+            continue  # 이메일이 없으면 건너뜀
+        
+        # 쿠폰 생성
+        new_coupon = Coupon(
+            create_user_email=email,
+            create_user_name=email,
+            create_user_id=9,
+            discount_price=5000,
+        )
+
+        # 쿠폰을 데이터베이스에 저장
+        db.add(new_coupon)
+        db.commit()
+        db.refresh(new_coupon)
+        
+        subject = "GDG On Campus Kangnam Univ. 오픈 알림"
+        body = get_notification_email_template(new_coupon.coupon_number)
+        
+        image_path = "coupon_data/coupon_5000.png"  # 입력 이미지 경로
+        output_path = generate_output_path(new_coupon.coupon_number)  # 출력 이미지 경로
+        text = str(new_coupon.coupon_number)  # 삽입할 텍스트
+
+        add_text_to_png(image_path, output_path, text)
+        
+        # 이메일 전송 함수 호출
+        email_sent = send_email(email, subject, body, output_path)
+        
+        if not email_sent:
+            # 전송 실패 시 구글 시트 D열에 상태 기록
+            googlesheet_utils.update_status_in_sheet(index + 1, "Email Failed")
+            continue  # 이메일 발송에 실패해도 다음 루프로 넘어감
+        
+        # 성공적으로 전송된 경우에도 필요 시 상태 업데이트 가능
+        googlesheet_utils.update_status_in_sheet(index + 1, "Email Sent")
+
+    return {"message": "Email processing completed."}

@@ -160,3 +160,23 @@ class GooglesheetUtils:
 
         print(f"Updated {len(updates_apply)} rows in Apply Response and {len(updates_finance)} rows in Finance Sheet.")
         return updates_apply, updates_finance
+    
+    # def get_emails_from_sheet(self):
+    #     sheet_range = 'Notification!C:D'  # C열의 이메일 정보 가져오기
+        
+    #     result = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range=sheet_range).execute()
+    #     print(result)
+    #     return result.get('values', [])
+    
+    # def update_status_in_sheet(self, row_number, status):
+    #     # D열에 상태를 업데이트하는 함수
+    #     range_ = f'Notification!D{row_number}'  # D열의 특정 셀
+    #     body = {
+    #         'values': [[status]]  # 업데이트할 값
+    #     }
+    #     self.service.spreadsheets().values().update(
+    #         spreadsheetId=self.spreadsheet_id, 
+    #         range=range_, 
+    #         valueInputOption='RAW', 
+    #         body=body
+    #     ).execute()
