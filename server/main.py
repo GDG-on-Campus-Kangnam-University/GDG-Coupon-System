@@ -15,7 +15,6 @@ app = FastAPI()
 
 @app.on_event("startup")
 def startup_event():
-    fetch_and_update_google_sheets_data()
     scheduler_thread = threading.Thread(target=run_scheduler)
     scheduler_thread.daemon = True
     scheduler_thread.start()
